@@ -1,0 +1,30 @@
+{
+  "name": "blog-project-backend",
+  "version": "0.0.1",
+  "description": "Backend for a Blog project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adolfo-cia/blog-project-backend.git"
+  },
+  "author": "Adolfo Cia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adolfo-cia/blog-project-backend/issues"
+  },
+  "homepage": "https://github.com/adolfo-cia/blog-project-backend#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^15.1.0",
+    "mongoose": "^5.9.19"
+  },
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.21.2"
+  }
+}
