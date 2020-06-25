@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
-app.use(require('./routes/auth-routes.js'));
+app.use('/auth', require('./routes/auth-routes.js'));
 app.use(require('./routes/user-routes.js'));
 
 // Construct a schema, using GraphQL schema language

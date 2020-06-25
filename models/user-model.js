@@ -11,16 +11,33 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: false,
+  },
+  googleId: {
+    type: String,
+    required: false,
   },
 });
 
+const validatePassword = async function validatePassword(next) {
+  return new Promise((resolve, reject) => {
+    if (!this.password && !this.googleId) {
+      reject(new Error('password is required'));
+    } else {
+      resolve(next());
+    }
+  });
+};
+
 const hashPassword = async function hashPassword(next) {
-  const hash = await bcrypt.hash(this.password, 10);
-  this.password = hash;
+  if (this.password) {
+    const hash = await bcrypt.hash(this.password, 10);
+    this.password = hash;
+  }
   next();
 };
 
+UserSchema.pre('save', validatePassword);
 UserSchema.pre('save', hashPassword);
 
 UserSchema.methods.isValidPassword = async function isValidPassword(password) {
