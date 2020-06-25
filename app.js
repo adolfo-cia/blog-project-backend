@@ -5,14 +5,19 @@ const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://admin:admin@cluster0-kdhxs.mongodb.net/Cluster0?retryWrites=true&w=majority', { useNewUrlParser: true })
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://admin:admin@cluster0-kdhxs.mongodb.net/Cluster0?retryWrites=true&w=majority';
+
+mongoose.connect(MONGO_URI,
+  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
   .then(
-    () => { console.log('MongoDB connection successful'); },
-    (err) => { console.log('MongoDB connection error: ', err); },
+    () => console.log('MongoDB connection successful'),
+    (err) => console.log('MongoDB connection error: ', err),
   );
 
+const API_PORT = process.env.API_PORT || 4000;
+
 const app = express();
-app.listen(4000);
+app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
