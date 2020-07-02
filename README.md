@@ -118,3 +118,17 @@ Luego de la defensa el resultado puede ser:
 * Desarrollo a revisión - Defensa a repetir: se pactará una nueva fecha de entrega y defensa con el docente.
 
 [checklist]: ./checklist/README.md
+
+### 4 - Features
+* Login / Register
+* Google Oauth 2.0
+* Validations
+* Hashed passwords
+* Blog creation
+* Post creation / deletion / editing
+* Comment creation / deletion / editing
+* Blog subscription
+* Saved Post / Comment
+* Post / Comment votes
+* Searching
+* Sorting

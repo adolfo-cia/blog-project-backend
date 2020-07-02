@@ -11,30 +11,53 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    required: false,
   },
   googleId: {
     type: String,
-    required: false,
   },
-});
+  votedPosts: {
+    type: Number,
+  },
+  votedComments: {
+    type: Number,
+  },
+  savedPosts: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    default: [],
+  },
+  savedComments: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    default: [],
+  },
+  subscribedBlogs: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Blog' }],
+    default: [],
+  },
+  ownedBlogs: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'Blog' }],
+    default: [],
+  },
+}, { timestamps: true });
 
-const validatePassword = async function validatePassword(next) {
+const validatePassword = async function validatePassword() {
   return new Promise((resolve, reject) => {
     if (!this.password && !this.googleId) {
       reject(new Error('password is required'));
     } else {
-      resolve(next());
+      resolve();
     }
   });
 };
 
-const hashPassword = async function hashPassword(next) {
-  if (this.password) {
-    const hash = await bcrypt.hash(this.password, 10);
-    this.password = hash;
+const hashPassword = async function hashPassword() {
+  try {
+    if (this.password) {
+      const hash = await bcrypt.hash(this.password, 10);
+      this.password = hash;
+    }
+  } catch (err) {
+    throw new Error('Error while hashing password');
   }
-  next();
 };
 
 UserSchema.pre('save', validatePassword);
