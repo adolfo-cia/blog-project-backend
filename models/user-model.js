@@ -14,6 +14,7 @@ const UserSchema = new Schema({
   },
   googleId: {
     type: String,
+    index: true,
   },
   votedPosts: {
     type: Number,
@@ -33,23 +34,17 @@ const UserSchema = new Schema({
     type: [{ type: Schema.Types.ObjectId, ref: 'Blog' }],
     default: [],
   },
-  ownedBlogs: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'Blog' }],
-    default: [],
-  },
 }, { timestamps: true });
 
-const validatePassword = async function validatePassword() {
-  return new Promise((resolve, reject) => {
-    if (!this.password && !this.googleId) {
-      reject(new Error('password is required'));
-    } else {
-      resolve();
-    }
-  });
-};
+function passwordRequired(next) {
+  if (!this.password && !this.googleId) {
+    next(new Error('password is required'));
+  } else {
+    next();
+  }
+}
 
-const hashPassword = async function hashPassword() {
+async function hashPassword() {
   try {
     if (this.password) {
       const hash = await bcrypt.hash(this.password, 10);
@@ -58,9 +53,9 @@ const hashPassword = async function hashPassword() {
   } catch (err) {
     throw new Error('Error while hashing password');
   }
-};
+}
 
-UserSchema.pre('save', validatePassword);
+UserSchema.pre('save', passwordRequired);
 UserSchema.pre('save', hashPassword);
 
 UserSchema.methods.isValidPassword = async function isValidPassword(password) {

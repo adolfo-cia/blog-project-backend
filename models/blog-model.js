@@ -13,13 +13,15 @@ const BlogSchema = new Schema({
     required: true,
   },
   owner: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  ownerName: {
-    type: String,
-    required: true,
+    id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      index: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
   },
 }, { timestamps: true });
 

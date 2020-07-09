@@ -6,41 +6,47 @@ const PostSchema = new Schema({
   title: {
     type: String,
     required: true,
-    unique: true,
   },
   body: {
     type: String,
-    required: true,
   },
   type: {
     type: String,
     enum: ['POST', 'LINK'],
     required: true,
   },
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  ownerName: {
-    type: String,
-    required: true,
+  author: {
+    id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      index: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
   },
   blog: {
-    type: Schema.Types.ObjectId,
-    ref: 'Blog',
-    required: true,
+    id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      index: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
   },
-  blogName: {
-    type: String,
-    required: true,
+  votes: {
+    type: Number,
+    default: 0,
   },
-  votedUp: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  upVotes: {
+    type: [{ type: Schema.Types.ObjectId }],
     default: [],
   },
-  votedDown: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  downVotes: {
+    type: [{ type: Schema.Types.ObjectId }],
     default: [],
   },
   deleted: {
@@ -49,6 +55,16 @@ const PostSchema = new Schema({
     default: false,
   },
 }, { timestamps: true });
+
+function bodyRequired(next) {
+  if (!this.deleted && !this.body) {
+    next(new Error('body is required'));
+  } else {
+    next();
+  }
+}
+
+PostSchema.pre('save', bodyRequired);
 
 const Post = mongoose.model('Post', PostSchema);
 

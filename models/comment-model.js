@@ -7,31 +7,52 @@ const CommentSchema = new Schema({
     type: String,
     required: true,
   },
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  ownerName: {
-    type: String,
-    required: true,
+  author: {
+    id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      index: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
   },
   post: {
-    type: Schema.Types.ObjectId,
-    ref: 'Post',
-    required: true,
+    id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      index: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
   },
-  postName: {
+  votes: {
+    type: Number,
+    default: 0,
+  },
+  upVoted: {
+    type: [{ type: Schema.Types.ObjectId }],
+    default: [],
+  },
+  downVoted: {
+    type: [{ type: Schema.Types.ObjectId }],
+    default: [],
+  },
+  slug: {
     type: String,
     required: true,
   },
-  votedUp: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    default: [],
+  fullSlug: {
+    type: String,
+    required: true,
   },
-  votedDown: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    default: [],
+  level: {
+    type: Number,
+    required: true,
+    default: 1,
   },
   deleted: {
     type: Boolean,
@@ -39,6 +60,8 @@ const CommentSchema = new Schema({
     default: false,
   },
 }, { timestamps: true });
+
+CommentSchema.index({ 'post.id': 1, fullSlug: 1 });
 
 const Comment = mongoose.model('Comment', CommentSchema);
 

@@ -15,9 +15,15 @@ app.use(passport.initialize());
 
 app.use('/auth', require('./routes/auth-routes.js'));
 app.use(require('./routes/user-routes.js'));
+app.use(require('./routes/blog-routes.js'));
+app.use(require('./routes/post-routes.js'));
 
-mongoose.connect(MONGO_URI,
-  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+mongoose.set('debug', true);
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+})
   .then(() => {
     console.log('MongoDB connection successful');
     app.listen(API_PORT, () => console.log(`App listening on port ${API_PORT}`));
