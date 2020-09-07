@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const express = require('express');
 const passport = require('passport');
-const graphqlHTTP = require('express-graphql');
+const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
 
