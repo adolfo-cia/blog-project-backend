@@ -1,4 +1,5 @@
 const Blog = require('../models/blog-model.js');
+const User = require('../models/user-model.js');
 
 module.exports = {
 
@@ -67,4 +68,23 @@ module.exports = {
     }
   },
 
+  subscribe: async (req, res) => {
+    const { _id: userId } = req.user;
+    const { blogId } = req.params;
+    try {
+      const user = await User.findById(userId);
+      if (!user.subscribedBlogs.includes(blogId)) {
+        user.subscribedBlogs.push(blogId);
+      } else {
+        user.subscribedBlogs = user.subscribedBlogs
+          .filter(
+            (subscribedBlogId) => subscribedBlogId.toString() !== blogId.toString(),
+          );
+      }
+      user.save();
+      res.status(201).send();
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
 };

@@ -1,7 +1,7 @@
 const passport = require('passport');
 const router = require('express').Router();
 const {
-  getPosts, createPost, editPost, deletePost, upVotePost, downVotePost,
+  getPosts, createPost, editPost, deletePost, upVotePost, downVotePost, savePost,
 } = require('../controllers/post-controllers.js');
 
 router.get('/blogs/:blogId/posts', getPosts);
@@ -11,5 +11,6 @@ router.delete('/blogs/:blogId/posts/:postId', passport.authenticate('jwt', { ses
 
 router.post('/blogs/:blogId/posts/:postId/upVote', passport.authenticate('jwt', { session: false }), upVotePost);
 router.post('/blogs/:blogId/posts/:postId/downVote', passport.authenticate('jwt', { session: false }), downVotePost);
+router.post('/blogs/:blogId/posts/:postId/save', passport.authenticate('jwt', { session: false }), savePost);
 
 module.exports = router;

@@ -13,7 +13,7 @@ module.exports.generateJWT = async function generateJWT(user) {
   const payload = {
     sub: _id,
     iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + (60 * 5),
+    exp: Math.floor(Date.now() / 1000) + (60 * 15),
   };
   return new Promise((resolve, reject) => {
     jwt.sign(payload, 'mySecret', { algorithm: 'HS256' }, (err, token) => {

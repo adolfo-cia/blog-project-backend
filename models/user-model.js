@@ -44,23 +44,22 @@ function passwordRequired(next) {
   }
 }
 
-async function hashPassword() {
-  try {
-    if (this.password) {
-      const hash = await bcrypt.hash(this.password, 10);
-      this.password = hash;
-    }
-  } catch (err) {
-    throw new Error('Error while hashing password');
-  }
-}
-
 UserSchema.pre('save', passwordRequired);
-UserSchema.pre('save', hashPassword);
 
 UserSchema.methods.isValidPassword = async function isValidPassword(password) {
   const compare = await bcrypt.compare(password, this.password);
   return compare;
+};
+UserSchema.statics.hashPassword = async function hashPassword(password) {
+  let pwd = password;
+  if (pwd) {
+    try {
+      pwd = await bcrypt.hash(pwd, 10);
+    } catch (err) {
+      throw new Error('Error while hashing password');
+    }
+  }
+  return pwd;
 };
 
 const User = mongoose.model('User', UserSchema);

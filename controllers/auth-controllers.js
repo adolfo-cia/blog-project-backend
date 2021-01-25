@@ -7,7 +7,7 @@ module.exports.registerController = async function registerController(req, res) 
       if (!user) {
         User.create({
           username: req.body.username,
-          password: req.body.password,
+          password: await User.hashPassword(req.body.password),
         })
           .then(async (savedUser) => res.json(await generateJWT(savedUser)))
           .catch((err) => res.status(500).json({ msg: err.message }));
