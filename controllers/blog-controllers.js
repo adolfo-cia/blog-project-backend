@@ -1,4 +1,5 @@
 const Blog = require('../models/blog-model.js');
+const Post = require('../models/post-model.js');
 const User = require('../models/user-model.js');
 
 module.exports = {
@@ -7,6 +8,32 @@ module.exports = {
     try {
       const blogs = await Blog.find({}).limit(10).exec();
       res.json(blogs);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  getBlog: async (req, res) => {
+    try {
+      const { blogId } = req.params;
+      const blog = await Blog.findById(blogId).exec();
+      if (blog) {
+        return res.json(blog);
+      }
+      return res.status(404).send();
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  },
+
+  getPosts: async (req, res) => {
+    try {
+      const { blogId } = req.params;
+      const posts = await Post
+        .find({ 'blog.id': blogId })
+        .limit(10)
+        .exec();
+      res.json(posts);
     } catch (err) {
       res.status(500).json(err);
     }

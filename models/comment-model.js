@@ -33,13 +33,17 @@ const CommentSchema = new Schema({
     type: Number,
     default: 0,
   },
-  upVoted: {
+  upVotes: {
     type: [{ type: Schema.Types.ObjectId }],
     default: [],
   },
-  downVoted: {
+  downVotes: {
     type: [{ type: Schema.Types.ObjectId }],
     default: [],
+  },
+  parentId: {
+    type: Schema.Types.ObjectId,
+    index: true,
   },
   slug: {
     type: String,
@@ -62,6 +66,7 @@ const CommentSchema = new Schema({
 }, { timestamps: true });
 
 CommentSchema.index({ 'post.id': 1, fullSlug: 1 });
+CommentSchema.index({ 'post.id': 1, slug: 1 });
 
 const Comment = mongoose.model('Comment', CommentSchema);
 

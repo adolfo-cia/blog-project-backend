@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Post = require('../models/post-model.js');
 const Blog = require('../models/blog-model.js');
 const User = require('../models/user-model.js');
+const Comment = require('../models/comment-model.js');
 
 const updateUserPostVotes = async (userId) => {
   const user = await User.findById(userId);
@@ -15,23 +16,27 @@ const updateUserPostVotes = async (userId) => {
 };
 
 module.exports = {
-  getPosts: async (req, res) => {
+
+  getPost: async (req, res) => {
     try {
-      const { blogId } = req.params;
-      const posts = await Post
-        .find({ 'blog.id': blogId })
-        .limit(10)
+      const { postId } = req.params;
+      const post = await Post
+        .findById(postId)
         .exec();
-      res.json(posts);
+      if (post) {
+        return res.json(post);
+      }
+      return res.status(404).send();
     } catch (err) {
-      res.status(500).json(err);
+      return res.status(500).json(err);
     }
   },
 
   createPost: async (req, res) => {
     const { _id: userId, username } = req.user;
-    const { title, body, type } = req.body;
-    const { blogId } = req.params;
+    const {
+      blogId, title, body, type,
+    } = req.body;
     try {
       const blog = await Blog
         .findById(blogId)
@@ -57,12 +62,9 @@ module.exports = {
   editPost: async (req, res) => {
     const { _id: userId } = req.user;
     const { title, body, type } = req.body;
-    const { blogId, postId } = req.params;
+    const { postId } = req.params;
     try {
-      const post = await Post.findOne({
-        _id: postId,
-        'blog.id': blogId,
-      }).exec();
+      const post = await Post.findById(postId).exec();
       if (post) {
         if (post.author.id.toString() !== userId.toString()) {
           return res.status(401).send();
@@ -87,12 +89,9 @@ module.exports = {
 
   deletePost: async (req, res) => {
     const { _id: userId } = req.user;
-    const { blogId, postId } = req.params;
+    const { postId } = req.params;
     try {
-      const post = await Post.findOne({
-        _id: postId,
-        'blog.id': blogId,
-      }).exec();
+      const post = await Post.findById(postId).exec();
       if (post) {
         if (post.author.id.toString() !== userId.toString()) {
           return res.status(401).send();
@@ -110,13 +109,10 @@ module.exports = {
 
   upVotePost: async (req, res) => {
     const { _id: userId } = req.user;
-    const { blogId, postId } = req.params;
+    const { postId } = req.params;
 
     try {
-      const post = await Post.findOne({
-        _id: postId,
-        'blog.id': blogId,
-      }).exec();
+      const post = await Post.findById(postId).exec();
       if (post) {
         if (post.author.id.toString() !== userId.toString()) {
           return res.status(401).send();
@@ -147,13 +143,10 @@ module.exports = {
 
   downVotePost: async (req, res) => {
     const { _id: userId } = req.user;
-    const { blogId, postId } = req.params;
+    const { postId } = req.params;
 
     try {
-      const post = await Post.findOne({
-        _id: postId,
-        'blog.id': blogId,
-      }).exec();
+      const post = await Post.findById(postId).exec();
       if (post) {
         if (post.author.id.toString() !== userId.toString()) {
           return res.status(401).send();
@@ -184,13 +177,10 @@ module.exports = {
 
   savePost: async (req, res) => {
     const { _id: userId } = req.user;
-    const { blogId, postId } = req.params;
+    const { postId } = req.params;
 
     try {
-      const post = await Post.findOne({
-        _id: postId,
-        'blog.id': blogId,
-      }).exec();
+      const post = await Post.findById(postId).exec();
       if (post) {
         const user = await User.findById(userId);
         if (!user.savedPosts.includes(postId)) {
@@ -219,4 +209,18 @@ module.exports = {
     }
   },
 
+  getComments: async (req, res) => {
+    try {
+      const { postId } = req.params;
+      const comments = await Comment
+        .find({ 'post.id': postId }, {
+          body: 1, slug: 1, fullSlug: 1, level: 1, parentId: 1,
+        })
+        .sort({ fullSlug: 1 })
+        .exec();
+      res.json(comments);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
 };
